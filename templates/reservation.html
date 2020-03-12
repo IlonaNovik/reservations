@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="limiter">
+    <div class="container-table100">
+        <div class="wrap-table100">
+            {% include 'alerts.html' %}
+            <div class="table">
+                <div class="row header">
+                    <div class="cell">
+                        Reservation Details
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        Id {{ reservation.id }}
+                    </div>
+                </div>
+                <div class="row">
+                        <div class="cell" data-title="number">
+                            Reservation Number
+                        </div>
+                        <div class="cell">
+
+                        </div>
+                        <div class="cell">
+
+                        </div>
+                        <div class="cell">
+                            {{ reservation.number }}
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="arrival">
+                        Arrival Date
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        <form action="{% url 'reservation' reservation.id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="text" name="arrival_date" value="{{ reservation.arrival|date:'Y-m-d' }}" required>
+                            <button type="submit"><i class="fas fa-edit" style="color:#6c7ae0;"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="departure">
+                        Departure Date
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        <form action="{% url 'reservation' reservation.id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="text" name="departure_date" value="{{ reservation.departure|date:'Y-m-d' }}" required>
+                            <button type="submit"><i class="fas fa-edit" style="color:#6c7ae0;"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="name">
+                        Name
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        {{ reservation.name }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="phone">
+                        Phone
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        {{ reservation.phone }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="email">
+                        Email
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        {{ reservation.email }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="no_of_people">
+                        Number of people
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        {{ reservation.no_of_people }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="status">
+                        Status
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        {{ reservation.status }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-title="return">
+                        <a href="{% url 'index' %}" class="return-btn">&#8617; Back to reservations</a>
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+
+                    </div>
+                    <div class="cell">
+                        {% if reservation.status == 'NEW' %}
+                            <form id="cancel" method="POST" action="{% url 'reservation' reservation.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="cancel_reservation" value="2" />
+                                <a href="#" onclick="document.forms[2].submit();return false;" class="cancel">&#10005; Cancel reservation</a>
+                            </form>
+                        {% else %}
+                            <form id="reopen" method="POST" action="{% url 'reservation' reservation.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="reopen_reservation" value="3" />
+                                <a href="#" onclick="document.forms[2].submit();return false;" class="reopen">&#8635; Re-open reservation</a>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+        </div>
+    </div>
+{% endblock %}
