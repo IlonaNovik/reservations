@@ -211,3 +211,6 @@ fabric.properties
 
 # Enviromental variables
 .env
+
+#Git
+git
