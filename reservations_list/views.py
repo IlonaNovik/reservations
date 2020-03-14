@@ -9,17 +9,31 @@ date_validation = '^20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$'
 
 def index(request):
     reservations = Reservation.objects.order_by('number')
-    reservations_status_query = Reservation.objects.values('status').distinct()
+
+    """Getting all statuses from DB"""
     status_list = []
+    reservations_status_query = Reservation.objects.values('status').distinct()
     for i in reservations_status_query:
         status_list.append(i['status'])
-    date_type = ['all_date, arrival, departure']
 
+    """Defining Date types"""
+    date_type = ['all_date', 'arrival', 'departure']
+
+    """Queryset for Reservation Number"""
     if 'number' in request.GET:
         number = request.GET['number'].strip()
         if number:
             reservations = reservations.filter(number__icontains=number)
 
+    """Queryset for status"""
+    if 'status' in request.GET:
+        status = request.GET['status']
+        if status == 'all':
+            reservations = reservations
+        else:
+            reservations = reservations.filter(status__iexact=status)
+
+    """Queryset for date ranges and date types"""
     if 'start_date' and 'end_date' in request.GET:
         start_date = request.GET['start_date'].strip()
         end_date = request.GET['end_date'].strip()
@@ -39,14 +53,8 @@ def index(request):
         else:
             messages.error(request, 'Please enter correct date format (yyyy-mm-dd)')
 
-    if 'status' in request.GET:
-        status = request.GET['status']
-        if status == 'all':
-            reservations = reservations
-        else:
-            reservations = reservations.filter(status__iexact=status)
-
-    paginator = Paginator(reservations, 500)
+    """Pagination"""
+    paginator = Paginator(reservations, 20)
     page = request.GET.get('page')
 
     try:
@@ -60,14 +68,18 @@ def index(request):
     end_index = page_index + 10 if page_index <= max_index - 10 else max_index
     page_range = list(paginator.page_range)[start_index:end_index]
 
+    """Modifying request GET urlcode for pagination"""
+    url_query_code = request.GET.urlencode()
+    url = re.sub('[a-z]+=\d{1,2}\&', '', url_query_code)
+
     context = {
         'reservations': reservations,
         'page_range': page_range,
         'values': request.GET,
         'status_list': status_list,
         'date_type': date_type,
+        'url_query_code': url,
     }
-    print(context['values'])
     return render(request, 'index.html', context)
 
 
