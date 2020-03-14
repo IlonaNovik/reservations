@@ -2,67 +2,137 @@
 {% block content %}
     <div class="limiter">
         <div class="container-table100">
-            <div class="wrap-table100">
-                    <div class="table">
-                        <div class="row header">
-                            <div class="cell">
-                                Reservation Number
-                            </div>
-                            <div class="cell">
-                                Arrival Date
-                            </div>
-                            <div class="cell">
-                                Departure Date
-                            </div>
-                            <div class="cell">
-                                Name
-                            </div>
-                            <div class="cell">
-                                Status
-                            </div>
-                            <div class="cell">
+            {% include 'alerts.html' %}
+            <form action="{% url 'index' %}" method="GET">
+                <div class="row-search">
+                    <div class="cell-search">
+                        <input type="search" name="number" placeholder="Reservation number"
+                               class="search-control" value="{{ values.number }}">
+                    </div>
+                    <div class="cell-search">
+                        <input type="search" name="start_date" placeholder="Start date"
+                               class="search-control" value="{{ values.start_date }}">
+                    </div>
+                    <div class="cell-search">
+                        <input type="search" name="end_date" placeholder="End date"
+                               class="search-control" value="{{ values.end_date }}">
+                    </div>
+                    <div class="cell-search">
+                        <select name="date_type" class="search-control">
+                            <option selected value="all_date">Date type</option>
+                            {% if  values.date_type ==  "arrival" or values.date_type ==  "departure" %}
+                                {% if values.date_type == 'arrival' %}
+                                    <option value="arrival" selected>Arrival</option>
+                                    <option value="departure">Departure</option>
+                                {% elif values.date_type == 'departure' %}
+                                    <option value="arrival">Arrival</option>
+                                    <option value="departure" selected>Departure</option>
+                                {% endif %}
+                            {% else %}
+                                <option value="arrival">Arrival</option>
+                                <option value="departure">Departure</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="cell-search">
+                        <select name="status" class="search-control">
+                            <option selected="true" value="all">Status (All)</option>
+                            {% for status in status_list %}
+                                {% if values.status %}
+                                    {% if status == values.status %}
+                                        <option value="{{ value.status }}" selected>{{ values.status }}</option>
+                                    {% else %}
+                                        <option value="{{ status }}">{{ status }}</option>
+                                    {% endif %}
+                                {% else %}
+                                    <option value="{{ status }}">{{ status }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row-search">
+                    <div class="cell-search">
 
+                    </div>
+                    <div class="cell-search">
+
+                    </div>
+                    <div class="cell-search">
+
+                    </div>
+                    <div class="cell-search">
+
+                    </div>
+                    <div class="cell-search">
+                        <a href="#" onclick="document.forms[0].submit();return false;" class="search"><i class="fas fa-search"></i> Search</a>
+                    </div>
+                </div>
+            </form>
+            <div class="wrap-table100">
+
+                <div class="table">
+                    <div class="row header">
+                        <div class="cell">
+                            Reservation Number
+                        </div>
+                        <div class="cell">
+                            Arrival Date
+                        </div>
+                        <div class="cell">
+                            Departure Date
+                        </div>
+                        <div class="cell">
+                            Name
+                        </div>
+                        <div class="cell">
+                            Status
+                        </div>
+                        <div class="cell">
+
+                        </div>
+                    </div>
+                    {% if reservations %}
+                        {% for reservation in reservations %}
+                            <div class="row">
+                                <div class="cell" data-title="Number">
+                                    {{ reservation.number }}
+                                </div>
+                                <div class="cell" data-title="Arrival_date">
+                                    {{ reservation.arrival|date:'Y-m-d' }}
+                                </div>
+                                <div class="cell" data-title="Departure_date">
+                                    {{ reservation.departure|date:'Y-m-d'  }}
+                                </div>
+                                <div class="cell" data-title="Name">
+                                    {{ reservation.name }}
+                                </div>
+                                <div class="cell" data-title="Status">
+                                    {{ reservation.status }}
+                                </div>
+                                <div class="cell" data-title="Details">
+                                    <a href="{% url 'reservation' reservation.id %}" class="details">Details</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="row">
+                            <div class="cell">
+                                No Reservations Available
+                            </div>
+                            <div class="cell">
+                            </div>
+                            <div class="cell">
+                            </div>
+                            <div class="cell">
+                            </div>
+                            <div class="cell">
+                            </div>
+                            <div class="cell">
                             </div>
                         </div>
-                        {% if reservations %}
-                            {% for reservation in reservations %}
-                                <div class="row">
-                                    <div class="cell" data-title="Number">
-                                        {{ reservation.number }}
-                                    </div>
-                                    <div class="cell" data-title="Arrival_date">
-                                        {{ reservation.arrival|date:'d-m-Y' }}
-                                    </div>
-                                    <div class="cell" data-title="Departure_date">
-                                        {{ reservation.departure|date:'d-m-Y'  }}
-                                    </div>
-                                    <div class="cell" data-title="Name">
-                                        {{ reservation.name }}
-                                    </div>
-                                    <div class="cell" data-title="Status">
-                                        {{ reservation.status }}
-                                    </div>
-                                    <div class="cell" data-title="Details">
-                                        <a href="{% url 'reservation' reservation.id %}" class="details">Details</a>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="row">
-                                <div class="cell">
-                                    No Reservations Available
-                                </div>
-                                <div class="cell">
-                                </div>
-                                <div class="cell">
-                                </div>
-                                <div class="cell">
-                                </div>
-                                <div class="cell">
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="pagination">
