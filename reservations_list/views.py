@@ -52,15 +52,15 @@ def index(request):
                 messages.error(request, 'Please enter start date and end date in format (yyyy-mm-dd)')
             if date_type == 'all_date':
                 reservations = reservations.order_by('number')
-        else:
-            number = request.GET['number'].strip()
-            status = request.GET['status']
-            if number != "" and number is not None:
-                reservations = reservations.filter(number__icontains=number)
-            elif status != 'all':
-                reservations = reservations.filter(status__iexact=status)
-            else:
-                messages.info(request, 'Please fill necessary fields')
+        # else:
+        #     number = request.GET['number'].strip()
+        #     status = request.GET['status']
+        #     if number != "" and number is not None:
+        #         reservations = reservations.filter(number__icontains=number)
+        #     elif status != 'all':
+        #         reservations = reservations.filter(status__iexact=status)
+        #     else:
+        #         messages.info(request, 'Please fill necessary fields')
 
     """Pagination"""
     paginator = Paginator(reservations, 20)

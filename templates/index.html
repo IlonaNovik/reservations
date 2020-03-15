@@ -3,10 +3,10 @@
     <div class="limiter">
         <div class="container-table100">
             {% include '_alerts.html' %}
-            <form action="{% url 'index' %}" method="GET">
+            <form action="{% url 'index' %}" method="GET" class="form">
                 <div class="row-search">
                     <div class="cell-search">
-                        <input type="search" name="number" placeholder="Reservation number"
+                        <input type="search" name="number" placeholder="Reservation No."
                                class="search-control" value="{{ values.number }}">
                     </div>
                     <div class="cell-search">
@@ -50,6 +50,9 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="cell-search">
+                        <a href="#" onclick="document.forms[0].submit();return false;" class="search"><i class="fas fa-search"></i> Search</a>
+                    </div>
                 </div>
                 <div class="row-search">
                     <div class="cell-search">
@@ -64,9 +67,9 @@
                     <div class="cell-search">
 
                     </div>
-                    <div class="cell-search">
-                        <a href="#" onclick="document.forms[0].submit();return false;" class="search"><i class="fas fa-search"></i> Search</a>
-                    </div>
+<!--                    <div class="cell-search">-->
+<!--                        <a href="#" onclick="document.forms[0].submit();return false;" class="search"><i class="fas fa-search"></i> Search</a>-->
+<!--                    </div>-->
                 </div>
             </form>
             <div class="wrap-table100">
