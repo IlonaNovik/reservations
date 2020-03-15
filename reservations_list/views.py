@@ -39,19 +39,28 @@ def index(request):
         end_date = request.GET['end_date'].strip()
         date_type = request.GET['date_type']
 
-        if re.match(date_validation, start_date) and re.match(date_validation, end_date):
-            if start_date is not None and start_date != '' and end_date is not None and end_date != ''\
-                    and date_type is not 'all_date':
-                if date_type is None and date_type == '':
+        if start_date is not None and start_date != '' and end_date is not None and end_date != '':
+            if re.match(date_validation, start_date) and re.match(date_validation, end_date):
+                if date_type == 'all_date':
                     messages.info(request, 'Please choose date type')
+                    reservations = reservations.order_by('number')
                 elif date_type == 'arrival':
                     reservations = reservations.filter(arrival__range=[start_date, end_date]).order_by('arrival')
                 elif date_type == 'departure':
                     reservations = reservations.filter(departure__range=[start_date, end_date]).order_by('departure')
+            else:
+                messages.error(request, 'Please enter start date and end date in format (yyyy-mm-dd)')
             if date_type == 'all_date':
                 reservations = reservations.order_by('number')
         else:
-            messages.error(request, 'Please enter correct date format (yyyy-mm-dd)')
+            number = request.GET['number'].strip()
+            status = request.GET['status']
+            if number != "" and number is not None:
+                reservations = reservations.filter(number__icontains=number)
+            elif status != 'all':
+                reservations = reservations.filter(status__iexact=status)
+            else:
+                messages.info(request, 'Please fill necessary fields')
 
     """Pagination"""
     paginator = Paginator(reservations, 20)
@@ -69,8 +78,11 @@ def index(request):
     page_range = list(paginator.page_range)[start_index:end_index]
 
     """Modifying request GET urlcode for pagination"""
-    url_query_code = request.GET.urlencode()
-    url = re.sub('[a-z]+=\d{1,2}\&', '', url_query_code)
+    url_query_string = request.GET.urlencode()
+    url = re.sub('[a-z]+=\d{1,2}\&', '', url_query_string)
+
+    """Saving query string to sessions"""
+    request.session['query_string_url'] = url_query_string
 
     context = {
         'reservations': reservations,
@@ -86,9 +98,11 @@ def index(request):
 def reservation(request, reservation_id):
 
     reservation = get_object_or_404(Reservation, pk=reservation_id)
+    query_string_url = request.session['query_string_url']
 
     context = {
-        'reservation': reservation
+        'reservation': reservation,
+        'query_string_url': query_string_url,
     }
     if request.method == 'POST':
         if request.POST.get('arrival_date'):
